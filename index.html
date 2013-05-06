@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+  <head>
+    <title>Pub Messenger</title>
+
+    <meta name=viewport content=width=device-width>
+    <meta name=viewport content=initial-scale=1.0>
+    <meta name=viewport content=user-scalable=no>
+
+    <meta name=apple-mobile-web-app-capable content=yes>
+    <meta name=apple-mobile-web-app-status-bar-style content=black>
+
+    <link rel=apple-touch-icon href=icon.png>
+    <link rel=apple-touch-startup-image href=startup.png>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+    <link href="screen.css" type="text/stylesheet" rel="stylesheet" />
+
+    <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+    <script src="http://cdn.pubnub.com/pubnub-3.4.4.js"></script>
+    <script src="messenger.js"></script>
+  </head>
+  <body>
+    <!-- Home Page -->
+    <div data-role="page" id="homePage" data-theme="a">
+
+      <div data-role="header">
+        <h1>Sign In</h1>
+      </div><!-- /header -->
+
+      <div data-role="content">
+        <h3>Welcome to Pub Messenger!</h3>
+        <h4>Input a name to start chatting</h4>
+        <input type="text" name="name" id="username" placeholder="Username" />
+        <a href="#" id="startChatButton" data-role="button">Start Chatting!</a>
+      </div><!-- /content -->
+
+    </div><!-- /page -->
+
+    <!-- Chat List Page -->
+    <div data-role="page" id="chatListPage" data-theme="a">
+      <div data-role="header">
+        <h1>Current Chats</h1>
+      </div>
+
+      <div data-role="content">
+        <ul data-role="listview" data-split-icon="delete" id="chatList">
+          <!-- <li><span class="username">User123:</span>This is my message.</li> -->
+        </ul>
+
+        <hr />
+
+        <input type="text" name="name" id="chatRoomName" placeholder="Chat Room Name" />
+        <a href="#" id="newChatButton" data-role="button">Join New Chat</a>
+      </div>
+    </div>
+
+    <!-- Chat Page -->
+    <div data-role="page" id="chatPage" data-theme="a">
+
+      <div data-role="header">
+        <h1>Pub Messenger</h1>
+      </div><!-- /header -->
+
+      <div data-role="content">
+        <ul data-role="listview" id="messageList">
+          <!-- <li><span class="username">User123:</span>This is my message.</li> -->
+        </ul>
+        <hr />
+        <textarea id="messageContent"></textarea>
+        <div class="ui-grid-a">
+          <div class="ui-block-a"><a href="#" id="sendMessageButton" data-role="button">Send Message</a></div>
+          <div class="ui-block-b"><a href="#" id="backButton" data-rel="back" data-role="button">Go Back</a></div>
+        </div>
+
+        <div id="userList">
+          
+        </div>
+      </div><!-- /content -->
+
+    </div><!-- /page -->
+
+    <div data-role="dialog" id="delete">
+      <div data-role="content">
+        <h3>Delete This Chat?</h3>
+        <a href="#" data-role="button" id="deleteButton">Delete</a>
+        <a href="#" data-role="button" data-rel="back">Cancel</a>
+      </div>
+    </div>
+
+    <div data-role="page" id="userListPage" data-theme="a">
+      <div data-role="header">
+        <h1>Pub Messenger</h1>
+      </div>
+
+      <div data-role="content">
+
+      </div>
+    </div>
+  </body>
+</html>
