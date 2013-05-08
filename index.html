@@ -51,25 +51,33 @@
     </div>
 
     <!-- Chat Page -->
-    <div data-role="page" id="chatPage" data-theme="a">
-
-      <div data-role="header">
-        <h1>Pub Messenger</h1>
-      </div><!-- /header -->
+    <div data-role="page" id="chatPage" data-theme="a" class="type-interior">
 
       <div data-role="content">
-        <ul data-role="listview" id="messageList">
-          <!-- <li><span class="username">User123:</span>This is my message.</li> -->
-        </ul>
-        <hr />
-        <textarea id="messageContent"></textarea>
-        <div class="ui-grid-a">
-          <div class="ui-block-a"><a href="#" id="sendMessageButton" data-role="button">Send Message</a></div>
-          <div class="ui-block-b"><a href="#" id="backButton" data-rel="back" data-role="button">Go Back</a></div>
+        <div class="content-primary">
+          <div data-role="header">
+            <h1>Pub Messenger</h1>
+          </div><!-- /header -->
+
+          <div data-role="content">
+            <ul data-role="listview" id="messageList">
+              <!-- <li><span class="username">User123:</span>This is my message.</li> -->
+            </ul>
+          </div>
+
+          <div data-role="footer">
+            <textarea id="messageContent"></textarea>
+              <div class="ui-grid-a">
+                <div class="ui-block-a"><a href="#" id="sendMessageButton" data-role="button">Send Message</a></div>
+                <div class="ui-block-b"><a href="#" id="backButton" data-rel="back" data-role="button">Go Back</a></div>
+              </div>
+          </div>
         </div>
 
-        <div id="userList">
-          
+        <div class="content-secondary">
+          <ul data-role="listview" id="userList" data-theme="c">
+        
+          </ul>
         </div>
       </div><!-- /content -->
 
@@ -77,7 +85,7 @@
 
     <div data-role="dialog" id="delete">
       <div data-role="content">
-        <h3>Delete This Chat?</h3>
+        <h3>Leave this Channel?</h3>
         <a href="#" data-role="button" id="deleteButton">Delete</a>
         <a href="#" data-role="button" data-rel="back">Cancel</a>
       </div>

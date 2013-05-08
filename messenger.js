@@ -25,13 +25,25 @@ $(document).ready(function () {
     });
   };
 
+  PubNub.prototype.addSubscription = function(channel) {
+    this.subscriptions.push(channel);
+    this.subscriptions = $.unique(this.subscriptions);
+  };
+
+  PubNub.prototype.removeSubscription = function(channel) {
+    if (this.subscriptions.indexOf(channel) !== -1) {
+      this.subscriptions.splice(this.subscriptions.indexOf(channel), 1);
+    }
+    this.saveSubscriptions();
+  };
+
   PubNub.prototype.saveSubscriptions = function() {
     localStorage["pn-subscriptions"] = this.subscriptions;
   };
 
   PubNub.prototype.subscribe = function(options) {
     this.connection.subscribe.apply(this.connection, arguments);
-    this.subscriptions.push(options.channel);
+    this.addSubscription(options.channel);
     this.saveSubscriptions();
   };
 
@@ -68,10 +80,16 @@ $(document).ready(function () {
   // Home View
   /////
   function HomeView() {
+    if (localStorage["username"]) {
+      usernameInput.val(localStorage["username"]);
+    }
+
     chatButton.off('click');
     chatButton.click(function (event) {
       if(usernameInput.val() != '') {
         username = usernameInput.val();
+
+        localStorage["username"] = username;
 
         pubnub.connect(username);
 
@@ -114,9 +132,9 @@ $(document).ready(function () {
 
       deleteButton.unbind('click');
       deleteButton.click(function (event) {
-        chats.splice(chats.indexOf(channelName), 1);
-        localStorage["chats"] = chats;
-        pages.delete.children('[data-rel="back"]').click();
+        pubnub.removeSubscription(channelName);
+        console.log(pages.delete.children());
+        pages.delete.find('[data-rel="back"]').click();
       });
     }
   };
@@ -133,6 +151,7 @@ $(document).ready(function () {
 
     users = [];
     messageList.empty();
+    userList.empty();
 
     pubnub.subscribe({
       channel: chatChannel,
@@ -145,11 +164,13 @@ $(document).ready(function () {
 
         if (message.action == "join") {
           users.push(message.uuid);
+          userList.append("<li>" + message.uuid + "</li>");
         } else {
           users.splice(users.indexOf(message.uuid), 1);
+          userList.find('[data-username="' + message.uuid + '"]').remove();
         }
 
-        userList.text(users.join(", "));
+        userList.listview('refresh');
       }
     });
 
@@ -167,7 +188,7 @@ $(document).ready(function () {
     });
 
     // Change the title to the chat channel.
-    pages.chat.find("h1:first").text("Pub Messenger - " + chatChannel);
+    pages.chat.find("h1:first").text(chatChannel);
 
     messageContent.off('keydown');
     messageContent.bind('keydown', function (event) {
