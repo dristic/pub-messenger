@@ -1,5 +1,5 @@
 .type-home {
-  background-image: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%), url(img/cream_pixels.png);
+  background-image: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%), url(cream_pixels.png);
 }
 
 .type-home .ui-content {
