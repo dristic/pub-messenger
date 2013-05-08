@@ -23,10 +23,6 @@
     <!-- Home Page -->
     <div data-role="page" id="homePage" data-theme="a">
 
-      <div data-role="header">
-        <h1>Sign In</h1>
-      </div><!-- /header -->
-
       <div data-role="content">
         <h3>Welcome to Pub Messenger!</h3>
         <h4>Input a name to start chatting</h4>
@@ -43,14 +39,14 @@
       </div>
 
       <div data-role="content">
+        <input type="text" name="name" id="chatRoomName" placeholder="Chat Room Name" />
+        <a href="#" id="newChatButton" data-role="button">Join New Chat</a>
+
+        <br />
+
         <ul data-role="listview" data-split-icon="delete" id="chatList">
           <!-- <li><span class="username">User123:</span>This is my message.</li> -->
         </ul>
-
-        <hr />
-
-        <input type="text" name="name" id="chatRoomName" placeholder="Chat Room Name" />
-        <a href="#" id="newChatButton" data-role="button">Join New Chat</a>
       </div>
     </div>
 

@@ -1,8 +1,51 @@
 $(document).ready(function () {
+  ////
+  // PubNub Decorator
+  // -------------------
+  // This wraps the pubnub libarary so we can handle the uuid and list
+  // of subscribed channels.
+  ////
+  function PubNub() {
+    this.publishKey = 'pub-c54880a5-ba99-4836-a084-08f57b4b5333';
+    this.subscribeKey = 'sub-3129de73-8f26-11e1-94c8-1543525cae6d';
+    this.subscriptions = localStorage["pn-subscriptions"] || [];
+
+    if(typeof this.subscriptions == "string") {
+      this.subscriptions = this.subscriptions.split(",");
+    }
+    this.subscriptions = $.unique(this.subscriptions);
+  }
+
+  PubNub.prototype.connect = function(username) {
+    this.username = username;
+    this.connection = PUBNUB.init({
+      publish_key: this.publishKey,
+      subscribe_key: this.subscribeKey,
+      uuid: this.username
+    });
+  };
+
+  PubNub.prototype.saveSubscriptions = function() {
+    localStorage["pn-subscriptions"] = this.subscriptions;
+  };
+
+  PubNub.prototype.subscribe = function(options) {
+    this.connection.subscribe.apply(this.connection, arguments);
+    this.subscriptions.push(options.channel);
+    this.saveSubscriptions();
+  };
+
+  PubNub.prototype.publish = function() {
+    this.connection.publish.apply(this.connection, arguments);
+  };
+
+  PubNub.prototype.history = function() {
+    this.connection.history.apply(this.connection, arguments);
+  };
+
   var chatChannel = '',
       username = '',
       users = [],
-      chats = localStorage["chats"] || [],
       usernameInput = $('#username'),
       chatRoomName = $("#chatRoomName"),
       chatButton = $("#startChatButton"),
@@ -13,7 +56,7 @@ $(document).ready(function () {
       messageList = $("#messageList"),
       messageContent = $("#messageContent"),
       userList = $("#userList"),
-      pubnub = null,
+      pubnub = new PubNub(),
       pages = {
         home: $("#homePage"),
         chatList: $("#chatListPage"),
@@ -21,141 +64,95 @@ $(document).ready(function () {
         delete: $("#delete")
       };
 
-  // Fix local storage coming out as a string
-  if(typeof chats == "string") {
-    chats = chats.split(",");
-  }
-  chats = $.unique(chats);
-  localStorage["chats"] = chats;
+  ////////
+  // Home View
+  /////
+  function HomeView() {
+    chatButton.off('click');
+    chatButton.click(function (event) {
+      if(usernameInput.val() != '') {
+        username = usernameInput.val();
 
-  $.mobile.changePage(pages.home);
+        pubnub.connect(username);
 
-  function connect(username) {
-    if (pubnub === null) {
-      pubnub = PUBNUB.init({
-        publish_key: 'pub-c54880a5-ba99-4836-a084-08f57b4b5333',
-        subscribe_key: 'sub-3129de73-8f26-11e1-94c8-1543525cae6d',
-        uuid: username
+        $.mobile.changePage(pages.chatList);
+      }
+    });
+  };
+
+  /////
+  // Chat List View
+  ///////
+  function ChatListView(event, data) {
+    chatListEl.empty();
+    for(var i = 0; i < pubnub.subscriptions.length; i++) {
+      var chatName = pubnub.subscriptions[i],
+          chatEl = $("<li><a href='#chatPage' data-channel-name='" + chatName + "'>" 
+            + chatName 
+            + "</a><a href='#delete' data-rel='dialog' data-channel-name='" + chatName + "'></a></li>");
+      chatListEl.append(chatEl);
+      chatListEl.listview('refresh');
+    }
+
+    newChatButton.off('click');
+    newChatButton.click(function (event) {
+      if(chatRoomName.val() !== '') {
+        chatChannel = chatRoomName.val();
+
+        $.mobile.changePage(pages.chat);
+      }
+    });
+  };
+
+  //////
+  // Delete Chat View
+  ///////
+  function DeleteChatView(event, data) {
+    if (data.options && data.options.link) {
+      var channelName = data.options.link.attr('data-channel-name'),
+          deleteButton = pages.delete.find("#deleteButton");
+
+      deleteButton.unbind('click');
+      deleteButton.click(function (event) {
+        chats.splice(chats.indexOf(channelName), 1);
+        localStorage["chats"] = chats;
+        pages.delete.children('[data-rel="back"]').click();
       });
     }
   };
 
-  // Handles adding messages to our list.
-  function handleMessage(message) {
-    var messageEl = $("<li>"
-      + "<span class='username'>" + message.username + ": </span>"
-      + message.text
-      + "</li>");
-    messageList.append(messageEl);
-    messageList.listview('refresh');
-  }
+  /////
+  // Chatting View
+  //////
+  function ChatView(event, data) {
+    var self = this;
 
-  chatButton.click(function (event) {
-    if(usernameInput.val() != '') {
-      username = usernameInput.val();
-
-      $.mobile.changePage(pages.chatList);
+    if (data.options && data.options.link) {
+      chatChannel = data.options.link.attr('data-channel-name');
     }
-  });
 
-  $(document).bind("pagechange", function (event, data) {
-    if (data.toPage[0] == pages.chatList[0]) {
-      chatListEl.empty();
-      for(var i = 0; i < chats.length; i++) {
-        var chatName = chats[i],
-            chatEl = $("<li><a href='#chatPage' data-channel-name='" + chatName + "'>" 
-              + chatName 
-              + "</a><a href='#delete' data-rel='dialog' data-channel-name='" + chatName + "'></a></li>");
-        chatListEl.append(chatEl);
-        chatListEl.listview('refresh');
-      }
-    } else if (data.toPage[0] == pages.delete[0]) {
-      if (data.options && data.options.link) {
-        var channelName = data.options.link.attr('data-channel-name'),
-            deleteButton = pages.delete.find("#deleteButton");
+    users = [];
+    messageList.empty();
 
-        deleteButton.unbind('click');
-        deleteButton.click(function (event) {
-          chats.splice(chats.indexOf(channelName), 1);
-          localStorage["chats"] = chats;
-          pages.delete.children('[data-rel="back"]').click();
-        });
-      }
-    } else if (data.toPage[0] == pages.chat[0]) {
-      if (data.options && data.options.link) {
-        chatChannel = data.options.link.attr('data-channel-name');
-      }
+    pubnub.subscribe({
+      channel: chatChannel,
+      message: self.handleMessage,
+      presence   : function( message, env, channel ) {
+        // console.log( "Channel: ",            channel           );
+        // console.log( "Join/Leave/Timeout: ", message.action    );
+        // console.log( "Occupancy: ",          message.occupancy );
+        // console.log( "User ID: ",            message.uuid      );
 
-      users = [];
-      messageList.empty();
-
-      connect();
-
-      pubnub.subscribe({
-        channel: chatChannel,
-        message: handleMessage,
-        presence   : function( message, env, channel ) {
-          // console.log( "Channel: ",            channel           );
-          // console.log( "Join/Leave/Timeout: ", message.action    );
-          // console.log( "Occupancy: ",          message.occupancy );
-          // console.log( "User ID: ",            message.uuid      );
-
-          if (message.action == "join") {
-            users.push(message.uuid);
-          } else {
-            users.splice(users.indexOf(message.uuid), 1);
-          }
-
-          userList.text(users.join(", "));
+        if (message.action == "join") {
+          users.push(message.uuid);
+        } else {
+          users.splice(users.indexOf(message.uuid), 1);
         }
-      });
 
-      $(document).trigger('subscribed');
+        userList.text(users.join(", "));
+      }
+    });
 
-      // Change the title to the chat channel.
-      pages.chat.find("h1:first").text("Pub Messenger - " + chatChannel);
-    }
-  });
-
-  newChatButton.click(function (event) {
-    if(chatRoomName.val() !== '') {
-      chatChannel = chatRoomName.val();
-
-      chats.push(chatChannel);
-      localStorage["chats"] = chats;
-
-      $.mobile.changePage(pages.chat);
-    }
-  });
-
-  messageContent.bind('keydown', function (event) {
-    if((event.keyCode || event.charCode) !== 13) return true;
-    sendMessageButton.click();
-    return false;
-  });
-
-  sendMessageButton.click(function (event) {
-    var message = messageContent.val();
-
-    if(message !== "") {
-      pubnub.publish({
-        channel: chatChannel,
-        message: {
-          username: username,
-          text: message
-        }
-      });
-
-      messageContent.val("");
-    }
-  });
-
-  // backButton.click(function (event) {
-  //   messageList.empty();
-  //   $.mobile.changePage(pages.home);
-  // });
-
-  $(document).on('subscribed', function (event) {
     // Handle chat history
     pubnub.history({
       channel: chatChannel,
@@ -165,16 +162,61 @@ $(document).ready(function () {
       messages = messages || [];
 
       for(var i = 0; i < messages.length; i++) {
-        handleMessage(messages[i]);
+        self.handleMessage(messages[i]);
       }
     });
 
-    // Handle presence
-    // pubnub.presence({
-    //   channel: chatChannel,
-    //   callback: function (message) {
-    //     console.log("Presence message: " + message);
-    //   }
-    // });
+    // Change the title to the chat channel.
+    pages.chat.find("h1:first").text("Pub Messenger - " + chatChannel);
+
+    messageContent.off('keydown');
+    messageContent.bind('keydown', function (event) {
+      if((event.keyCode || event.charCode) !== 13) return true;
+      sendMessageButton.click();
+      return false;
+    });
+
+    sendMessageButton.click(function (event) {
+      var message = messageContent.val();
+
+      if(message !== "") {
+        pubnub.publish({
+          channel: chatChannel,
+          message: {
+            username: username,
+            text: message
+          }
+        });
+
+        messageContent.val("");
+      }
+    });
+  };
+
+  // This handles appending new messages to our chat list.
+  ChatView.prototype.handleMessage = function(message) {
+    var messageEl = $("<li>"
+        + "<span class='username'>" + message.username + ": </span>"
+        + message.text
+        + "</li>");
+    messageList.append(messageEl);
+    messageList.listview('refresh');
+  };
+
+  // Initially start off on the home page.
+  $.mobile.changePage(pages.home);
+  var currentView = new HomeView();
+
+  // This code essentially does what routing does in Backbone.js.
+  // It takes the page destination and creates a view based on what
+  // page the user is navigating to.
+  $(document).bind("pagechange", function (event, data) {
+    if (data.toPage[0] == pages.chatList[0]) {
+      currentView = new ChatListView(event, data);
+    } else if (data.toPage[0] == pages.delete[0]) {
+      currentView = new DeleteChatView(event, data);
+    } else if (data.toPage[0] == pages.chat[0]) {
+      currentView = new ChatView(event, data);
+    }
   });
 });
