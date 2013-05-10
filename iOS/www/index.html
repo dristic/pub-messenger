@@ -11,6 +11,7 @@
 
     <link rel=apple-touch-icon href=icon.png>
     <link rel=apple-touch-startup-image href=startup.png>
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,700,400italic" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
     <link rel="stylesheet" href="css/screen.css" type="text/stylesheet" />
 
@@ -24,7 +25,9 @@
     <div data-role="page" id="homePage" data-theme="c" class="type-home">
 
       <div data-role="content">
-        <h3>PubNub Messenger</h3>
+        <div class="logo">
+          <h3>PubNub Messenger</h3>
+        </div>
         <input type="text" name="name" id="username" placeholder="Display Name" />
         <a href="#" id="startChatButton" data-role="button">Start Chatting!</a>
       </div><!-- /content -->
@@ -32,7 +35,7 @@
     </div><!-- /page -->
 
     <!-- Chat List Page -->
-    <div data-role="page" id="chatListPage" data-theme="c">
+    <div data-role="page" id="chatListPage" data-theme="c" class="type-chat-list">
       <div data-role="header">
         <h1>Current Chats</h1>
       </div>
@@ -43,7 +46,7 @@
 
         <br />
 
-        <ul data-role="listview" data-split-icon="delete" id="chatList">
+        <ul data-role="listview" data-split-icon="delete" data-split-theme="c" id="chatList">
           <!-- <li><span class="username">User123:</span>This is my message.</li> -->
         </ul>
       </div>
@@ -64,11 +67,11 @@
             </ul>
           </div>
 
-          <div data-role="footer">
+          <div data-role="footer" data-theme="c">
             <textarea id="messageContent"></textarea>
               <div class="ui-grid-a">
                 <div class="ui-block-a"><a href="#" id="sendMessageButton" data-role="button">Send Message</a></div>
-                <div class="ui-block-b"><a href="#" id="backButton" data-rel="back" data-role="button">Go Back</a></div>
+                <div class="ui-block-b"><a href="#" id="backButton" data-rel="back" data-role="button">Chat Rooms</a></div>
               </div>
           </div>
         </div>
@@ -84,7 +87,7 @@
 
     <div data-role="dialog" id="delete">
       <div data-role="content">
-        <h3>Leave this Channel?</h3>
+        <h3>Unsubscribe From This Channel?</h3>
         <a href="#" data-role="button" id="deleteButton">Delete</a>
         <a href="#" data-role="button" data-rel="back">Cancel</a>
       </div>

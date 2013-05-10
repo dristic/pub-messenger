@@ -6,8 +6,8 @@ $(document).ready(function () {
   // of subscribed channels.
   ////
   function PubNub() {
-    this.publishKey = 'pub-c54880a5-ba99-4836-a084-08f57b4b5333';
-    this.subscribeKey = 'sub-3129de73-8f26-11e1-94c8-1543525cae6d';
+    this.publishKey = 'pub-c-40686ff2-11d5-4d8d-8617-79c293b550c7';
+    this.subscribeKey = 'sub-c-3e046e97-b6aa-11e2-aa09-28cfe94b2603';
     this.subscriptions = localStorage["pn-subscriptions"] || [];
 
     if(typeof this.subscriptions == "string") {

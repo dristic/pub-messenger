@@ -1,0 +1,11 @@
+#! /usr/local/bin/node
+
+var exec = require('child_process').exec;
+
+console.log("Copying files into iOS directory");
+exec("cp css/screen.css iOS/www/css/screen.css");
+exec("cp img/pw_pattern.png iOS/www/img/pw_pattern.png");
+exec("cp js/messenger.js iOS/www/js/messenger.js");
+exec("cp index.html iOS/www/index.html");
+
+console.log("Completed Successfully!");
