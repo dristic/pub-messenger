@@ -47,6 +47,10 @@ $(document).ready(function () {
     this.saveSubscriptions();
   };
 
+  PubNub.prototype.unsubscribe = function(options) {
+    this.connection.unsubscribe.apply(this.connection, arguments);
+  };
+
   PubNub.prototype.publish = function() {
     this.connection.publish.apply(this.connection, arguments);
   };
@@ -77,14 +81,14 @@ $(document).ready(function () {
       };
 
   // Request permission for desktop notifications.
-  var notificationPermission = 0;
-  if (window.webkitNotifications) {
-    notificationPermission = window.webkitNotifications.checkPermission();
+  // var notificationPermission = 0;
+  // if (window.webkitNotifications) {
+  //   notificationPermission = window.webkitNotifications.checkPermission();
 
-    if (notificationPermission == 0) {
-      window.webkitNotifications.requestPermission();
-    }
-  }
+  //   if (notificationPermission == 0) {
+  //     window.webkitNotifications.requestPermission();
+  //   }
+  // }
 
   ////////
   // Home View
@@ -169,10 +173,10 @@ $(document).ready(function () {
       channel: chatChannel,
       message: self.handleMessage,
       presence   : function( message, env, channel ) {
-        // console.log( "Channel: ",            channel           );
-        // console.log( "Join/Leave/Timeout: ", message.action    );
-        // console.log( "Occupancy: ",          message.occupancy );
-        // console.log( "User ID: ",            message.uuid      );
+        console.log( "Channel: ",            channel           );
+        console.log( "Join/Leave/Timeout: ", message.action    );
+        console.log( "Occupancy: ",          message.occupancy );
+        console.log( "User ID: ",            message.uuid      );
 
         if (message.action == "join") {
           users.push(message.uuid);
@@ -224,6 +228,13 @@ $(document).ready(function () {
         messageContent.val("");
       }
     });
+
+    backButton.off('click');
+    backButton.click(function (event) {
+      pubnub.unsubscribe({
+        channel: chatChannel
+      });
+    });
   };
 
   // This handles appending new messages to our chat list.
@@ -236,19 +247,19 @@ $(document).ready(function () {
     messageList.listview('refresh');
 
     // Notification handling
-    if (notificationPermission !== 0 && message.username !== username) {
-      var notification = window.webkitNotifications.createNotification(
-        window.location.href,
-        'PubNub Messenger Notification',
-        message.username + " said " + message.text
-      );
+    // if (notificationPermission !== 0 && message.username !== username) {
+    //   var notification = window.webkitNotifications.createNotification(
+    //     window.location.href,
+    //     'PubNub Messenger Notification',
+    //     message.username + " said " + message.text
+    //   );
 
-      notification.onclick = function () {
-        notification.close();
-      }
+    //   notification.onclick = function () {
+    //     notification.close();
+    //   }
 
-      notification.show();
-    }
+    //   notification.show();
+    // }
   };
 
   // Initially start off on the home page.
