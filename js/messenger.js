@@ -167,8 +167,6 @@ $(document).ready(function () {
     messageList.empty();
     userList.empty();
 
-    userList.append("<li><center>User List</center></li>");
-
     pubnub.subscribe({
       channel: chatChannel,
       message: self.handleMessage,
@@ -180,7 +178,7 @@ $(document).ready(function () {
 
         if (message.action == "join") {
           users.push(message.uuid);
-          userList.append("<li>" + message.uuid + "</li>");
+          userList.append("<li data-username='" + message.uuid + "'>" + message.uuid + "</li>");
         } else {
           users.splice(users.indexOf(message.uuid), 1);
           userList.find('[data-username="' + message.uuid + '"]').remove();
