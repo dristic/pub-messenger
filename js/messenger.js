@@ -76,6 +76,16 @@ $(document).ready(function () {
         delete: $("#delete")
       };
 
+  // Request permission for desktop notifications.
+  var notificationPermission = 0;
+  if (window.webkitNotifications) {
+    notificationPermission = window.webkitNotifications.checkPermission();
+
+    if (notificationPermission == 0) {
+      window.webkitNotifications.requestPermission();
+    }
+  }
+
   ////////
   // Home View
   /////
@@ -224,6 +234,21 @@ $(document).ready(function () {
         + "</li>");
     messageList.append(messageEl);
     messageList.listview('refresh');
+
+    // Notification handling
+    if (notificationPermission !== 0 && message.username !== username) {
+      var notification = window.webkitNotifications.createNotification(
+        window.location.href,
+        'PubNub Messenger Notification',
+        message.username + " said " + message.text
+      );
+
+      notification.onclick = function () {
+        notification.close();
+      }
+
+      notification.show();
+    }
   };
 
   // Initially start off on the home page.

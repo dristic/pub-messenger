@@ -9,4 +9,11 @@ exec("cp js/messenger.js iOS/www/js/messenger.js");
 exec("cp index.html iOS/www/index.html");
 exec("cp messenger.appcache iOS/www/messenger.appcache");
 
+console.log("Copying files into Android directory");
+exec("cp css/screen.css Android/assets/www/css/screen.css");
+exec("cp img/pw_pattern.png Android/assets/www/img/pw_pattern.png");
+exec("cp js/messenger.js Android/assets/www/js/messenger.js");
+exec("cp index.html Android/assets/www/index.html");
+exec("cp messenger.appcache Android/assets/www/messenger.appcache");
+
 console.log("Completed Successfully!");
