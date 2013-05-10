@@ -6,8 +6,8 @@ $(document).ready(function () {
   // of subscribed channels.
   ////
   function PubNub() {
-    this.publishKey = 'pub-c-40686ff2-11d5-4d8d-8617-79c293b550c7';
-    this.subscribeKey = 'sub-c-3e046e97-b6aa-11e2-aa09-28cfe94b2603';
+    this.publishKey = 'pub-c-8781d89b-1000-422d-b6ec-b75340d087bc';
+    this.subscribeKey = 'sub-c-fda9bb42-b75a-11e2-bc76-02ee2ddab7fe';
     this.subscriptions = localStorage["pn-subscriptions"] || [];
 
     if(typeof this.subscriptions == "string") {
@@ -152,6 +152,8 @@ $(document).ready(function () {
     users = [];
     messageList.empty();
     userList.empty();
+
+    userList.append("<li><center>User List</center></li>");
 
     pubnub.subscribe({
       channel: chatChannel,
