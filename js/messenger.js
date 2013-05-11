@@ -73,12 +73,23 @@ $(document).ready(function () {
       messageContent = $("#messageContent"),
       userList = $("#userList"),
       pubnub = new PubNub(),
+      isBlurred = false,
+      timerId = -1,
       pages = {
         home: $("#homePage"),
         chatList: $("#chatListPage"),
         chat: $("#chatPage"),
         delete: $("#delete")
       };
+
+  // Blur tracking
+  $(window).on('blur', function () {
+    isBlurred = true;
+  }).on("focus", function () {
+    isBlurred = false;
+    clearInterval(timerId);
+    document.title = "Pub Messenger";
+  });
 
   // Request permission for desktop notifications.
   var notificationPermission = 1;
@@ -246,21 +257,30 @@ $(document).ready(function () {
     messageList.append(messageEl);
     messageList.listview('refresh');
 
+    // Scroll to bottom of page
     $("html, body").animate({ scrollTop: $(document).height() }, "slow");
 
-    // Notification handling
-    if (notificationPermission === 0 && message.username !== username) {
-      var notification = window.webkitNotifications.createNotification(
-        'icon.jpg',
-        'PubNub Messenger Notification',
-        message.username + " said " + message.text
-      );
+    if (isBlurred) {
+      // Flash title if blurred
+      clearInterval(timerId);
+      timerId = setInterval(function () {
+        document.title = document.title == "Pub Messenger" ? "New Message" : "Pub Messenger";
+      }, 2000);
 
-      notification.onclick = function () {
-        notification.close();
+      // Notification handling
+      if (notificationPermission === 0 && message.username !== username) {
+        var notification = window.webkitNotifications.createNotification(
+          'icon.jpg',
+          'PubNub Messenger Notification',
+          message.username + " said " + message.text
+        );
+
+        notification.onclick = function () {
+          notification.close();
+        }
+
+        notification.show();
       }
-
-      notification.show();
     }
   };
 
