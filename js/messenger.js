@@ -246,6 +246,8 @@ $(document).ready(function () {
     messageList.append(messageEl);
     messageList.listview('refresh');
 
+    $("html, body").animate({ scrollTop: $(document).height() }, "slow");
+
     // Notification handling
     if (notificationPermission === 0 && message.username !== username) {
       var notification = window.webkitNotifications.createNotification(
