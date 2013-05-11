@@ -1,3 +1,13 @@
+/* Message Styling */
+span.username {
+  float: right;
+  color: rgba(100, 100, 100, 0.5);
+}
+
+li.message:nth-child(even) {
+  background: #E2E2E2;
+}
+
 /* Logo */
 .logo {
   font-family: "Ubuntu", Helvetica, sans-serif;

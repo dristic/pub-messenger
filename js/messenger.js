@@ -81,14 +81,16 @@ $(document).ready(function () {
       };
 
   // Request permission for desktop notifications.
-  // var notificationPermission = 0;
-  // if (window.webkitNotifications) {
-  //   notificationPermission = window.webkitNotifications.checkPermission();
+  var notificationPermission = 1;
+  if (window.webkitNotifications) {
+    notificationPermission = window.webkitNotifications.checkPermission();
 
-  //   if (notificationPermission == 0) {
-  //     window.webkitNotifications.requestPermission();
-  //   }
-  // }
+    if (notificationPermission === 1) {
+      window.webkitNotifications.requestPermission(function (event) {
+        notificationPermission = window.webkitNotifications.checkPermission();
+      });
+    }
+  }
 
   ////////
   // Home View
@@ -237,27 +239,27 @@ $(document).ready(function () {
 
   // This handles appending new messages to our chat list.
   ChatView.prototype.handleMessage = function(message) {
-    var messageEl = $("<li>"
-        + "<span class='username'>" + message.username + ": </span>"
+    var messageEl = $("<li class='message'>"
+        + "<span class='username'>" + message.username + "</span>"
         + message.text
         + "</li>");
     messageList.append(messageEl);
     messageList.listview('refresh');
 
     // Notification handling
-    // if (notificationPermission !== 0 && message.username !== username) {
-    //   var notification = window.webkitNotifications.createNotification(
-    //     window.location.href,
-    //     'PubNub Messenger Notification',
-    //     message.username + " said " + message.text
-    //   );
+    if (notificationPermission === 0 && message.username !== username) {
+      var notification = window.webkitNotifications.createNotification(
+        'icon.jpg',
+        'PubNub Messenger Notification',
+        message.username + " said " + message.text
+      );
 
-    //   notification.onclick = function () {
-    //     notification.close();
-    //   }
+      notification.onclick = function () {
+        notification.close();
+      }
 
-    //   notification.show();
-    // }
+      notification.show();
+    }
   };
 
   // Initially start off on the home page.
