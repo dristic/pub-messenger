@@ -9,6 +9,6 @@ img/pw_pattern.png
 js/messenger.js
 http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css
 https://fonts.googleapis.com/css?family=Ubuntu:300,400,700,400italic
-http://code.jquery.com/jquery-1.8.2.min.js"></script>
+http://code.jquery.com/jquery-1.8.2.min.js"
 http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js
 http://cdn.pubnub.com/pubnub-3.4.4.js
