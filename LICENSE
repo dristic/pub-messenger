@@ -1,13 +1,3 @@
-Pub Messenger
-=============
-
-A chat room based messaging app built on top of jQuery Mobile and PubNub. This demo integrates basic UUID login, chat room selection, and text based chat.
-[http://dristic.github.io/pub-messenger/](http://dristic.github.io/pub-messenger/)
-
-# Installation
-To run the app simple clone the repository and open the `index.html` file in the browser. All of the source code is located in `js/messenger.js`.
-
-# License
 PubNub Real-time Cloud-Hosted Push API and Push Notification Client Frameworks
 Copyright (c) 2013 PubNub Inc.
 http://www.pubnub.com/
