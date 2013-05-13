@@ -1,3 +1,18 @@
+/* Message Styling */
+span.username {
+  float: right;
+  color: rgba(100, 100, 100, 0.5);
+}
+
+li.message:nth-child(even) {
+  background: #E2E2E2;
+}
+
+/* User List Styling */
+.type-interior .content-secondary {
+  position: fixed !important;
+}
+
 /* Logo */
 .logo {
   font-family: "Ubuntu", Helvetica, sans-serif;
@@ -137,7 +152,7 @@ dd h4 { margin:15px 0 0 0; }
 }
 
 .content-primary .ui-footer {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 100%;
 }
@@ -147,8 +162,13 @@ dd h4 { margin:15px 0 0 0; }
   width: 97%;
 }
 
+.content-primary .ui-footer .ui-grid-a {
+  width: 100%;
+}
+
 .type-interior .content-primary ul:first-child {
   margin: 0;
+  margin-bottom: 109px;
 }
 
 .type-interior .content-secondary {

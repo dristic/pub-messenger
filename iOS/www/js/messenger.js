@@ -47,6 +47,10 @@ $(document).ready(function () {
     this.saveSubscriptions();
   };
 
+  PubNub.prototype.unsubscribe = function(options) {
+    this.connection.unsubscribe.apply(this.connection, arguments);
+  };
+
   PubNub.prototype.publish = function() {
     this.connection.publish.apply(this.connection, arguments);
   };
@@ -69,12 +73,35 @@ $(document).ready(function () {
       messageContent = $("#messageContent"),
       userList = $("#userList"),
       pubnub = new PubNub(),
+      isBlurred = false,
+      timerId = -1,
       pages = {
         home: $("#homePage"),
         chatList: $("#chatListPage"),
         chat: $("#chatPage"),
         delete: $("#delete")
       };
+
+  // Blur tracking
+  $(window).on('blur', function () {
+    isBlurred = true;
+  }).on("focus", function () {
+    isBlurred = false;
+    clearInterval(timerId);
+    document.title = "Pub Messenger";
+  });
+
+  // Request permission for desktop notifications.
+  var notificationPermission = 1;
+  if (window.webkitNotifications) {
+    notificationPermission = window.webkitNotifications.checkPermission();
+
+    if (notificationPermission === 1) {
+      window.webkitNotifications.requestPermission(function (event) {
+        notificationPermission = window.webkitNotifications.checkPermission();
+      });
+    }
+  }
 
   ////////
   // Home View
@@ -153,20 +180,18 @@ $(document).ready(function () {
     messageList.empty();
     userList.empty();
 
-    userList.append("<li><center>User List</center></li>");
-
     pubnub.subscribe({
       channel: chatChannel,
       message: self.handleMessage,
       presence   : function( message, env, channel ) {
-        // console.log( "Channel: ",            channel           );
-        // console.log( "Join/Leave/Timeout: ", message.action    );
-        // console.log( "Occupancy: ",          message.occupancy );
-        // console.log( "User ID: ",            message.uuid      );
+        console.log( "Channel: ",            channel           );
+        console.log( "Join/Leave/Timeout: ", message.action    );
+        console.log( "Occupancy: ",          message.occupancy );
+        console.log( "User ID: ",            message.uuid      );
 
         if (message.action == "join") {
           users.push(message.uuid);
-          userList.append("<li>" + message.uuid + "</li>");
+          userList.append("<li data-username='" + message.uuid + "'>" + message.uuid + "</li>");
         } else {
           users.splice(users.indexOf(message.uuid), 1);
           userList.find('[data-username="' + message.uuid + '"]').remove();
@@ -214,16 +239,49 @@ $(document).ready(function () {
         messageContent.val("");
       }
     });
+
+    backButton.off('click');
+    backButton.click(function (event) {
+      pubnub.unsubscribe({
+        channel: chatChannel
+      });
+    });
   };
 
   // This handles appending new messages to our chat list.
   ChatView.prototype.handleMessage = function(message) {
-    var messageEl = $("<li>"
-        + "<span class='username'>" + message.username + ": </span>"
+    var messageEl = $("<li class='message'>"
+        + "<span class='username'>" + message.username + "</span>"
         + message.text
         + "</li>");
     messageList.append(messageEl);
     messageList.listview('refresh');
+
+    // Scroll to bottom of page
+    $("html, body").animate({ scrollTop: $(document).height() }, "slow");
+
+    if (isBlurred) {
+      // Flash title if blurred
+      clearInterval(timerId);
+      timerId = setInterval(function () {
+        document.title = document.title == "Pub Messenger" ? "New Message" : "Pub Messenger";
+      }, 2000);
+
+      // Notification handling
+      if (notificationPermission === 0 && message.username !== username) {
+        var notification = window.webkitNotifications.createNotification(
+          'icon.jpg',
+          'PubNub Messenger Notification',
+          message.username + " said " + message.text
+        );
+
+        notification.onclick = function () {
+          notification.close();
+        }
+
+        notification.show();
+      }
+    }
   };
 
   // Initially start off on the home page.
