@@ -1,0 +1,15 @@
+CACHE MANIFEST
+# 2013-05-13:v1
+
+# Explicitly cached master entries.
+CACHE:
+index.html
+css/screen.css
+img/pw_pattern.png
+js/messenger.js
+
+# Resource that require the user to be online.
+NETWORK:
+
+# Fallback resources.
+FALLBACK:
