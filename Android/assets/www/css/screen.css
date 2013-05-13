@@ -96,56 +96,6 @@ p.intro strong {
 .content-secondary .ui-listview {
   margin: 0;
 }
-/* new API additions */
-
-dt {  
-  margin: 35px 0 15px 0; 
-  background-color:#ddd; 
-  font-weight:normal;
-}
-dt code { 
-  display:inline-block; 
-  font-weight:bold;
-  color:#56A00E; 
-  padding:3px 7px; 
-  margin-right:10px; 
-  background-color:#fff; 
-}
-dd { 
-  margin-bottom:10px; 
-}
-dd .default { font-weight:bold; }
-dd pre { 
-  margin:0 0 0 0; 
-}
-dd code { font-weight: normal; }
-dd pre code { 
-  margin:0; 
-  border:none; 
-  font-weight:normal; 
-  font-size:100%; 
-  background-color:transparent; 
-}
-dd h4 { margin:15px 0 0 0; }
-    
-.localnav {
-  margin:0 0 20px 0;
-}
-.ui-mobile-viewport .localnav li {
-  float:left;
-}
-.localnav .ui-btn-inner { 
-  padding: .6em 10px; 
-  font-size:80%; 
-}
-
-/* custom dialog for the photos sharing */
-.ui-dialog.dialog-actionsheet .ui-dialog-contain {
-  margin-top: 0;
-}
-
-/* popup examples */
-.type-interior .ui-popup-container .ui-content { padding: 15px !important; }
 
 .type-interior .ui-content {
   padding: 0;
@@ -196,11 +146,10 @@ dd h4 { margin:15px 0 0 0; }
     padding: 0;
   }
   .type-interior {
-    height: 100%;
+    /*height: 100%;*/
   }
   .type-interior > .ui-content {
-    height: 100%;
-    overflow: hidden;
+    /*height: 100%;*/
   }
   .content-secondary {
     text-align: left;

@@ -184,11 +184,6 @@ $(document).ready(function () {
       channel: chatChannel,
       message: self.handleMessage,
       presence   : function( message, env, channel ) {
-        console.log( "Channel: ",            channel           );
-        console.log( "Join/Leave/Timeout: ", message.action    );
-        console.log( "Occupancy: ",          message.occupancy );
-        console.log( "User ID: ",            message.uuid      );
-
         if (message.action == "join") {
           users.push(message.uuid);
           userList.append("<li data-username='" + message.uuid + "'>" + message.uuid + "</li>");
@@ -210,8 +205,10 @@ $(document).ready(function () {
       messages = messages || [];
 
       for(var i = 0; i < messages.length; i++) {
-        self.handleMessage(messages[i]);
+        self.handleMessage(messages[i], false);
       }
+
+      $(document).scrollTop($(document).height());
     });
 
     // Change the title to the chat channel.
@@ -249,7 +246,9 @@ $(document).ready(function () {
   };
 
   // This handles appending new messages to our chat list.
-  ChatView.prototype.handleMessage = function(message) {
+  ChatView.prototype.handleMessage = function (message, animate) {
+    if (animate !== false) animate = true;
+
     var messageEl = $("<li class='message'>"
         + "<span class='username'>" + message.username + "</span>"
         + message.text
@@ -258,7 +257,9 @@ $(document).ready(function () {
     messageList.listview('refresh');
 
     // Scroll to bottom of page
-    $("html, body").animate({ scrollTop: $(document).height() }, "slow");
+    if (animate === true) {
+      $("html, body").animate({ scrollTop: $(document).height() - $(window).height() }, 'slow');
+    }
 
     if (isBlurred) {
       // Flash title if blurred
