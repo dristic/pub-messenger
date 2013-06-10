@@ -180,6 +180,10 @@ $(document).ready(function () {
     messageList.empty();
     userList.empty();
 
+    pubnub.unsubscribe({
+      channel: chatChannel
+    });
+
     pubnub.subscribe({
       channel: chatChannel,
       message: self.handleMessage,
