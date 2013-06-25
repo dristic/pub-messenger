@@ -225,6 +225,7 @@ $(document).ready(function () {
       return false;
     });
 
+    sendMessageButton.off('click');
     sendMessageButton.click(function (event) {
       var message = messageContent.val();
 
